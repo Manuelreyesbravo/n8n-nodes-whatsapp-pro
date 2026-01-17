@@ -14,14 +14,14 @@
     "whatsapp-flows"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/latamflows/n8n-nodes-whatsapp-pro",
+  "homepage": "https://github.com/Manuelreyesbravo/n8n-nodes-whatsapp-pro",
   "author": {
     "name": "LatamFlows",
     "email": "manu@latamflows.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/latamflows/n8n-nodes-whatsapp-pro.git"
+    "url": "https://github.com/Manuelreyesbravo/n8n-nodes-whatsapp-pro.git"
   },
   "engines": {
     "node": ">=18.0.0"
