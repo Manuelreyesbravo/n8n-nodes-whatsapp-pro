@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-whatsapp-pro",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Advanced WhatsApp Business API node for n8n with interactive messages, buttons, lists, catalogs and flows",
   "keywords": [
     "n8n-community-node-package",
@@ -17,7 +17,7 @@
   "homepage": "https://github.com/Manuelreyesbravo/n8n-nodes-whatsapp-pro",
   "author": {
     "name": "LatamFlows",
-    "email": "manu@latamflows.com"
+    "email": "manuelreyesbravo@gmail.com"
   },
   "repository": {
     "type": "git",
