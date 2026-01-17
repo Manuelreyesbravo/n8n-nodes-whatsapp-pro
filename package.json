@@ -1,0 +1,59 @@
+{
+  "name": "n8n-nodes-whatsapp-pro",
+  "version": "0.1.0",
+  "description": "Advanced WhatsApp Business API node for n8n with interactive messages, buttons, lists, catalogs and flows",
+  "keywords": [
+    "n8n-community-node-package",
+    "whatsapp",
+    "whatsapp-business",
+    "whatsapp-api",
+    "interactive-messages",
+    "buttons",
+    "list-messages",
+    "catalog",
+    "whatsapp-flows"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/latamflows/n8n-nodes-whatsapp-pro",
+  "author": {
+    "name": "LatamFlows",
+    "email": "manu@latamflows.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/latamflows/n8n-nodes-whatsapp-pro.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier --write .",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/WhatsAppProApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/WhatsAppPro/WhatsAppPro.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "gulp": "^4.0.2",
+    "n8n-workflow": "^1.20.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
