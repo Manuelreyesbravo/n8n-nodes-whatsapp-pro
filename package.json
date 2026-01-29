@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-whatsapp-pro",
-  "version": "0.1.2",
+  "version": "2.1.0",
   "description": "Advanced WhatsApp Business API node for n8n with interactive messages, buttons, lists, catalogs and flows",
   "keywords": [
     "n8n-community-node-package",
@@ -11,7 +11,8 @@
     "buttons",
     "list-messages",
     "catalog",
-    "whatsapp-flows"
+    "whatsapp-flows",
+    "contact-cards"
   ],
   "license": "MIT",
   "homepage": "https://github.com/Manuelreyesbravo/n8n-nodes-whatsapp-pro",
@@ -32,7 +33,10 @@
     "dev": "tsc --watch",
     "format": "prettier --write .",
     "lint": "eslint src --ext .ts",
-    "prepublishOnly": "npm run build"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run build && npm run test"
   },
   "files": [
     "dist"
@@ -47,10 +51,13 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^29.5.11",
     "@types/node": "^20.10.0",
     "gulp": "^4.0.2",
+    "jest": "^29.7.0",
     "n8n-workflow": "^1.20.0",
     "prettier": "^3.1.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.3.0"
   },
   "peerDependencies": {

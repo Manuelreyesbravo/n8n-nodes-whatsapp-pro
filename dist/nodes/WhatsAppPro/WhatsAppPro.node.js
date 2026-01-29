@@ -1,6 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WhatsAppPro = void 0;
+const n8n_workflow_1 = require("n8n-workflow");
+/**
+ * WhatsApp Pro Node - Advanced WhatsApp Business API integration
+ * Supports interactive messages, buttons, lists, templates, media, and catalog
+ *
+ * @author LatamFlows
+ * @version 2.0.0
+ */
 class WhatsAppPro {
     constructor() {
         this.description = {
@@ -23,7 +31,7 @@ class WhatsAppPro {
                 },
             ],
             properties: [
-                // Resource
+                // ==================== RESOURCE ====================
                 {
                     displayName: 'Resource',
                     name: 'resource',
@@ -53,7 +61,7 @@ class WhatsAppPro {
                     ],
                     default: 'message',
                 },
-                // ============ MESSAGE OPERATIONS ============
+                // ==================== MESSAGE OPERATIONS ====================
                 {
                     displayName: 'Operation',
                     name: 'operation',
@@ -92,7 +100,7 @@ class WhatsAppPro {
                     ],
                     default: 'sendText',
                 },
-                // ============ INTERACTIVE OPERATIONS ============
+                // ==================== INTERACTIVE OPERATIONS ====================
                 {
                     displayName: 'Operation',
                     name: 'operation',
@@ -131,7 +139,7 @@ class WhatsAppPro {
                     ],
                     default: 'sendButtons',
                 },
-                // ============ TEMPLATE OPERATIONS ============
+                // ==================== TEMPLATE OPERATIONS ====================
                 {
                     displayName: 'Operation',
                     name: 'operation',
@@ -170,7 +178,7 @@ class WhatsAppPro {
                     ],
                     default: 'sendTemplate',
                 },
-                // ============ MEDIA OPERATIONS ============
+                // ==================== MEDIA OPERATIONS ====================
                 {
                     displayName: 'Operation',
                     name: 'operation',
@@ -215,7 +223,7 @@ class WhatsAppPro {
                     ],
                     default: 'sendImage',
                 },
-                // ============ CATALOG OPERATIONS ============
+                // ==================== CATALOG OPERATIONS ====================
                 {
                     displayName: 'Operation',
                     name: 'operation',
@@ -248,7 +256,7 @@ class WhatsAppPro {
                     ],
                     default: 'sendProduct',
                 },
-                // ============ COMMON FIELDS ============
+                // ==================== COMMON FIELDS ====================
                 {
                     displayName: 'To',
                     name: 'to',
@@ -262,7 +270,7 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ TEXT MESSAGE FIELDS ============
+                // ==================== TEXT MESSAGE FIELDS ====================
                 {
                     displayName: 'Message',
                     name: 'message',
@@ -293,7 +301,75 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ INTERACTIVE BUTTONS FIELDS ============
+                // ==================== CONTACT FIELDS ====================
+                {
+                    displayName: 'Contact First Name',
+                    name: 'contactFirstName',
+                    type: 'string',
+                    default: '',
+                    required: true,
+                    description: 'Contact first name',
+                    displayOptions: {
+                        show: {
+                            resource: ['message'],
+                            operation: ['sendContact'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Contact Last Name',
+                    name: 'contactLastName',
+                    type: 'string',
+                    default: '',
+                    description: 'Contact last name (optional)',
+                    displayOptions: {
+                        show: {
+                            resource: ['message'],
+                            operation: ['sendContact'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Contact Phone',
+                    name: 'contactPhone',
+                    type: 'string',
+                    default: '',
+                    required: true,
+                    description: 'Contact phone number with country code',
+                    displayOptions: {
+                        show: {
+                            resource: ['message'],
+                            operation: ['sendContact'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Contact Email',
+                    name: 'contactEmail',
+                    type: 'string',
+                    default: '',
+                    description: 'Contact email (optional)',
+                    displayOptions: {
+                        show: {
+                            resource: ['message'],
+                            operation: ['sendContact'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Contact Organization',
+                    name: 'contactOrg',
+                    type: 'string',
+                    default: '',
+                    description: 'Contact organization/company (optional)',
+                    displayOptions: {
+                        show: {
+                            resource: ['message'],
+                            operation: ['sendContact'],
+                        },
+                    },
+                },
+                // ==================== INTERACTIVE BUTTONS FIELDS ====================
                 {
                     displayName: 'Body Text',
                     name: 'bodyText',
@@ -303,11 +379,11 @@ class WhatsAppPro {
                     },
                     default: '',
                     required: true,
-                    description: 'Main text of the interactive message',
+                    description: 'Main text of the interactive message (max 1024 characters)',
                     displayOptions: {
                         show: {
                             resource: ['interactive'],
-                            operation: ['sendButtons', 'sendList', 'sendCta'],
+                            operation: ['sendButtons', 'sendList', 'sendCta', 'requestLocation'],
                         },
                     },
                 },
@@ -316,7 +392,7 @@ class WhatsAppPro {
                     name: 'headerText',
                     type: 'string',
                     default: '',
-                    description: 'Optional header text',
+                    description: 'Optional header text (max 60 characters)',
                     displayOptions: {
                         show: {
                             resource: ['interactive'],
@@ -329,7 +405,7 @@ class WhatsAppPro {
                     name: 'footerText',
                     type: 'string',
                     default: '',
-                    description: 'Optional footer text',
+                    description: 'Optional footer text (max 60 characters)',
                     displayOptions: {
                         show: {
                             resource: ['interactive'],
@@ -346,7 +422,7 @@ class WhatsAppPro {
                         maxValues: 3,
                     },
                     default: {},
-                    description: 'Quick reply buttons (max 3)',
+                    description: 'Quick reply buttons (max 3). Each button title max 20 characters.',
                     displayOptions: {
                         show: {
                             resource: ['interactive'],
@@ -363,7 +439,7 @@ class WhatsAppPro {
                                     name: 'id',
                                     type: 'string',
                                     default: '',
-                                    description: 'Unique identifier for the button',
+                                    description: 'Unique identifier for the button (max 256 characters)',
                                 },
                                 {
                                     displayName: 'Button Title',
@@ -376,7 +452,7 @@ class WhatsAppPro {
                         },
                     ],
                 },
-                // ============ LIST MESSAGE FIELDS ============
+                // ==================== LIST MESSAGE FIELDS ====================
                 {
                     displayName: 'Button Text',
                     name: 'buttonText',
@@ -400,7 +476,7 @@ class WhatsAppPro {
                         maxValues: 10,
                     },
                     default: {},
-                    description: 'List sections with items',
+                    description: 'List sections with items (max 10 sections, max 10 items total across all sections)',
                     displayOptions: {
                         show: {
                             resource: ['interactive'],
@@ -417,7 +493,7 @@ class WhatsAppPro {
                                     name: 'title',
                                     type: 'string',
                                     default: '',
-                                    description: 'Section header',
+                                    description: 'Section header (max 24 characters)',
                                 },
                                 {
                                     displayName: 'Items',
@@ -438,6 +514,7 @@ class WhatsAppPro {
                                                     name: 'id',
                                                     type: 'string',
                                                     default: '',
+                                                    description: 'Unique item identifier (max 200 characters)',
                                                 },
                                                 {
                                                     displayName: 'Title',
@@ -461,7 +538,7 @@ class WhatsAppPro {
                         },
                     ],
                 },
-                // ============ CTA BUTTON FIELDS ============
+                // ==================== CTA BUTTON FIELDS ====================
                 {
                     displayName: 'CTA Type',
                     name: 'ctaType',
@@ -528,7 +605,7 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ TEMPLATE FIELDS ============
+                // ==================== TEMPLATE FIELDS ====================
                 {
                     displayName: 'Template Name',
                     name: 'templateName',
@@ -597,7 +674,7 @@ class WhatsAppPro {
                         },
                     ],
                 },
-                // ============ LOCATION FIELDS ============
+                // ==================== LOCATION FIELDS ====================
                 {
                     displayName: 'Latitude',
                     name: 'latitude',
@@ -652,7 +729,7 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ MEDIA FIELDS ============
+                // ==================== MEDIA FIELDS ====================
                 {
                     displayName: 'Media Source',
                     name: 'mediaSource',
@@ -728,7 +805,7 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ REACTION FIELDS ============
+                // ==================== REACTION FIELDS ====================
                 {
                     displayName: 'Message ID',
                     name: 'messageId',
@@ -757,7 +834,7 @@ class WhatsAppPro {
                         },
                     },
                 },
-                // ============ CATALOG FIELDS ============
+                // ==================== CATALOG FIELDS ====================
                 {
                     displayName: 'Catalog ID',
                     name: 'catalogId',
@@ -783,6 +860,32 @@ class WhatsAppPro {
                         show: {
                             resource: ['catalog'],
                             operation: ['sendProduct'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Body Text',
+                    name: 'catalogBodyText',
+                    type: 'string',
+                    default: '',
+                    description: 'Optional body text for product message',
+                    displayOptions: {
+                        show: {
+                            resource: ['catalog'],
+                            operation: ['sendProduct', 'sendProductList'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Header Text',
+                    name: 'catalogHeaderText',
+                    type: 'string',
+                    default: '',
+                    description: 'Header text for product list',
+                    displayOptions: {
+                        show: {
+                            resource: ['catalog'],
+                            operation: ['sendProductList'],
                         },
                     },
                 },
@@ -847,7 +950,7 @@ class WhatsAppPro {
                     body.recipient_type = 'individual';
                     body.to = to;
                 }
-                // ============ MESSAGE RESOURCE ============
+                // ==================== MESSAGE RESOURCE ====================
                 if (resource === 'message') {
                     if (operation === 'sendText') {
                         const message = this.getNodeParameter('message', i);
@@ -871,6 +974,36 @@ class WhatsAppPro {
                             address,
                         };
                     }
+                    else if (operation === 'sendContact') {
+                        const firstName = this.getNodeParameter('contactFirstName', i);
+                        const lastName = this.getNodeParameter('contactLastName', i, '');
+                        const phone = this.getNodeParameter('contactPhone', i);
+                        const email = this.getNodeParameter('contactEmail', i, '');
+                        const org = this.getNodeParameter('contactOrg', i, '');
+                        const contact = {
+                            name: {
+                                formatted_name: lastName ? `${firstName} ${lastName}` : firstName,
+                                first_name: firstName,
+                            },
+                            phones: [
+                                {
+                                    phone: phone,
+                                    type: 'CELL',
+                                },
+                            ],
+                        };
+                        if (lastName) {
+                            contact.name.last_name = lastName;
+                        }
+                        if (email) {
+                            contact.emails = [{ email, type: 'WORK' }];
+                        }
+                        if (org) {
+                            contact.org = { company: org };
+                        }
+                        body.type = 'contacts';
+                        body.contacts = [contact];
+                    }
                     else if (operation === 'react') {
                         const messageId = this.getNodeParameter('messageId', i);
                         const emoji = this.getNodeParameter('emoji', i);
@@ -881,7 +1014,7 @@ class WhatsAppPro {
                         };
                     }
                 }
-                // ============ INTERACTIVE RESOURCE ============
+                // ==================== INTERACTIVE RESOURCE ====================
                 else if (resource === 'interactive') {
                     body.type = 'interactive';
                     const bodyText = this.getNodeParameter('bodyText', i);
@@ -889,6 +1022,13 @@ class WhatsAppPro {
                     const footerText = this.getNodeParameter('footerText', i, '');
                     if (operation === 'sendButtons') {
                         const buttonsData = this.getNodeParameter('buttons.buttonValues', i, []);
+                        // Validate buttons inline
+                        if (buttonsData.length === 0) {
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'At least one button is required', { itemIndex: i });
+                        }
+                        if (buttonsData.length > 3) {
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Maximum 3 buttons allowed per message', { itemIndex: i });
+                        }
                         body.interactive = {
                             type: 'button',
                             body: { text: bodyText },
@@ -903,17 +1043,24 @@ class WhatsAppPro {
                             },
                         };
                         if (headerText) {
-                            body.interactive.header = { type: 'text', text: headerText };
+                            body.interactive.header = { type: 'text', text: headerText.substring(0, 60) };
                         }
                         if (footerText) {
-                            body.interactive.footer = { text: footerText };
+                            body.interactive.footer = { text: footerText.substring(0, 60) };
                         }
                     }
                     else if (operation === 'sendList') {
                         const buttonText = this.getNodeParameter('buttonText', i);
                         const sectionsData = this.getNodeParameter('sections.sectionValues', i, []);
+                        // Validate sections inline
+                        if (sectionsData.length === 0) {
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'At least one section is required', { itemIndex: i });
+                        }
+                        if (sectionsData.length > 10) {
+                            throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Maximum 10 sections allowed', { itemIndex: i });
+                        }
                         const sections = sectionsData.map((section) => ({
-                            title: section.title,
+                            title: section.title?.substring(0, 24) || '',
                             rows: (section.items?.itemValues || []).map((item) => ({
                                 id: item.id,
                                 title: item.title.substring(0, 24),
@@ -929,10 +1076,10 @@ class WhatsAppPro {
                             },
                         };
                         if (headerText) {
-                            body.interactive.header = { type: 'text', text: headerText };
+                            body.interactive.header = { type: 'text', text: headerText.substring(0, 60) };
                         }
                         if (footerText) {
-                            body.interactive.footer = { text: footerText };
+                            body.interactive.footer = { text: footerText.substring(0, 60) };
                         }
                     }
                     else if (operation === 'sendCta') {
@@ -969,7 +1116,7 @@ class WhatsAppPro {
                         };
                     }
                 }
-                // ============ TEMPLATE RESOURCE ============
+                // ==================== TEMPLATE RESOURCE ====================
                 else if (resource === 'template') {
                     if (operation === 'sendTemplate') {
                         const templateName = this.getNodeParameter('templateName', i);
@@ -1038,7 +1185,7 @@ class WhatsAppPro {
                         continue;
                     }
                 }
-                // ============ MEDIA RESOURCE ============
+                // ==================== MEDIA RESOURCE ====================
                 else if (resource === 'media') {
                     const mediaSource = this.getNodeParameter('mediaSource', i);
                     const caption = this.getNodeParameter('caption', i, '');
@@ -1073,12 +1220,12 @@ class WhatsAppPro {
                         }
                     }
                 }
-                // ============ CATALOG RESOURCE ============
+                // ==================== CATALOG RESOURCE ====================
                 else if (resource === 'catalog') {
                     if (operation === 'sendProduct') {
                         const catalogId = this.getNodeParameter('catalogId', i);
                         const productRetailerId = this.getNodeParameter('productRetailerId', i);
-                        const bodyText = this.getNodeParameter('bodyText', i, '');
+                        const bodyText = this.getNodeParameter('catalogBodyText', i, '');
                         body.type = 'interactive';
                         body.interactive = {
                             type: 'product',
@@ -1091,8 +1238,8 @@ class WhatsAppPro {
                     }
                     else if (operation === 'sendProductList') {
                         const catalogId = this.getNodeParameter('catalogId', i);
-                        const bodyText = this.getNodeParameter('bodyText', i);
-                        const headerText = this.getNodeParameter('headerText', i, '');
+                        const bodyText = this.getNodeParameter('catalogBodyText', i);
+                        const headerText = this.getNodeParameter('catalogHeaderText', i, '');
                         const sectionsData = this.getNodeParameter('productSections.sectionValues', i, []);
                         const sections = sectionsData.map((section) => ({
                             title: section.title,
@@ -1122,13 +1269,25 @@ class WhatsAppPro {
                     }
                 }
                 // Execute the API request
-                const response = await this.helpers.httpRequestWithAuthentication.call(this, 'whatsAppProApi', {
-                    method,
-                    url: `${baseUrl}${endpoint}`,
-                    body,
-                    json: true,
-                });
-                returnData.push({ json: response });
+                try {
+                    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'whatsAppProApi', {
+                        method,
+                        url: `${baseUrl}${endpoint}`,
+                        body,
+                        json: true,
+                    });
+                    returnData.push({ json: response });
+                }
+                catch (error) {
+                    // Handle WhatsApp API errors
+                    const errorData = error.response?.data?.error;
+                    if (errorData) {
+                        const errorMessage = errorData.message || 'Unknown WhatsApp API error';
+                        const errorCode = errorData.code || 'UNKNOWN';
+                        throw new n8n_workflow_1.NodeOperationError(this.getNode(), `WhatsApp API Error [${errorCode}]: ${errorMessage}`, { itemIndex: i });
+                    }
+                    throw error;
+                }
             }
             catch (error) {
                 if (this.continueOnFail()) {

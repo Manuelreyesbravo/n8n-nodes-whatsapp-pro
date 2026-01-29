@@ -4,8 +4,16 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	IHttpRequestMethods,
+	NodeOperationError,
 } from 'n8n-workflow';
 
+/**
+ * WhatsApp Pro Node - Advanced WhatsApp Business API integration
+ * Supports interactive messages, buttons, lists, templates, media, and catalog
+ * 
+ * @author LatamFlows
+ * @version 2.0.0
+ */
 export class WhatsAppPro implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'WhatsApp Pro',
@@ -27,7 +35,7 @@ export class WhatsAppPro implements INodeType {
 			},
 		],
 		properties: [
-			// Resource
+			// ==================== RESOURCE ====================
 			{
 				displayName: 'Resource',
 				name: 'resource',
@@ -58,7 +66,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'message',
 			},
 
-			// ============ MESSAGE OPERATIONS ============
+			// ==================== MESSAGE OPERATIONS ====================
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -98,7 +106,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'sendText',
 			},
 
-			// ============ INTERACTIVE OPERATIONS ============
+			// ==================== INTERACTIVE OPERATIONS ====================
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -138,7 +146,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'sendButtons',
 			},
 
-			// ============ TEMPLATE OPERATIONS ============
+			// ==================== TEMPLATE OPERATIONS ====================
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -178,7 +186,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'sendTemplate',
 			},
 
-			// ============ MEDIA OPERATIONS ============
+			// ==================== MEDIA OPERATIONS ====================
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -224,7 +232,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'sendImage',
 			},
 
-			// ============ CATALOG OPERATIONS ============
+			// ==================== CATALOG OPERATIONS ====================
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -258,7 +266,7 @@ export class WhatsAppPro implements INodeType {
 				default: 'sendProduct',
 			},
 
-			// ============ COMMON FIELDS ============
+			// ==================== COMMON FIELDS ====================
 			{
 				displayName: 'To',
 				name: 'to',
@@ -273,7 +281,7 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ TEXT MESSAGE FIELDS ============
+			// ==================== TEXT MESSAGE FIELDS ====================
 			{
 				displayName: 'Message',
 				name: 'message',
@@ -305,7 +313,76 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ INTERACTIVE BUTTONS FIELDS ============
+			// ==================== CONTACT FIELDS ====================
+			{
+				displayName: 'Contact First Name',
+				name: 'contactFirstName',
+				type: 'string',
+				default: '',
+				required: true,
+				description: 'Contact first name',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['sendContact'],
+					},
+				},
+			},
+			{
+				displayName: 'Contact Last Name',
+				name: 'contactLastName',
+				type: 'string',
+				default: '',
+				description: 'Contact last name (optional)',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['sendContact'],
+					},
+				},
+			},
+			{
+				displayName: 'Contact Phone',
+				name: 'contactPhone',
+				type: 'string',
+				default: '',
+				required: true,
+				description: 'Contact phone number with country code',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['sendContact'],
+					},
+				},
+			},
+			{
+				displayName: 'Contact Email',
+				name: 'contactEmail',
+				type: 'string',
+				default: '',
+				description: 'Contact email (optional)',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['sendContact'],
+					},
+				},
+			},
+			{
+				displayName: 'Contact Organization',
+				name: 'contactOrg',
+				type: 'string',
+				default: '',
+				description: 'Contact organization/company (optional)',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['sendContact'],
+					},
+				},
+			},
+
+			// ==================== INTERACTIVE BUTTONS FIELDS ====================
 			{
 				displayName: 'Body Text',
 				name: 'bodyText',
@@ -315,11 +392,11 @@ export class WhatsAppPro implements INodeType {
 				},
 				default: '',
 				required: true,
-				description: 'Main text of the interactive message',
+				description: 'Main text of the interactive message (max 1024 characters)',
 				displayOptions: {
 					show: {
 						resource: ['interactive'],
-						operation: ['sendButtons', 'sendList', 'sendCta'],
+						operation: ['sendButtons', 'sendList', 'sendCta', 'requestLocation'],
 					},
 				},
 			},
@@ -328,7 +405,7 @@ export class WhatsAppPro implements INodeType {
 				name: 'headerText',
 				type: 'string',
 				default: '',
-				description: 'Optional header text',
+				description: 'Optional header text (max 60 characters)',
 				displayOptions: {
 					show: {
 						resource: ['interactive'],
@@ -341,7 +418,7 @@ export class WhatsAppPro implements INodeType {
 				name: 'footerText',
 				type: 'string',
 				default: '',
-				description: 'Optional footer text',
+				description: 'Optional footer text (max 60 characters)',
 				displayOptions: {
 					show: {
 						resource: ['interactive'],
@@ -358,7 +435,7 @@ export class WhatsAppPro implements INodeType {
 					maxValues: 3,
 				},
 				default: {},
-				description: 'Quick reply buttons (max 3)',
+				description: 'Quick reply buttons (max 3). Each button title max 20 characters.',
 				displayOptions: {
 					show: {
 						resource: ['interactive'],
@@ -375,7 +452,7 @@ export class WhatsAppPro implements INodeType {
 								name: 'id',
 								type: 'string',
 								default: '',
-								description: 'Unique identifier for the button',
+								description: 'Unique identifier for the button (max 256 characters)',
 							},
 							{
 								displayName: 'Button Title',
@@ -389,7 +466,7 @@ export class WhatsAppPro implements INodeType {
 				],
 			},
 
-			// ============ LIST MESSAGE FIELDS ============
+			// ==================== LIST MESSAGE FIELDS ====================
 			{
 				displayName: 'Button Text',
 				name: 'buttonText',
@@ -413,7 +490,7 @@ export class WhatsAppPro implements INodeType {
 					maxValues: 10,
 				},
 				default: {},
-				description: 'List sections with items',
+				description: 'List sections with items (max 10 sections, max 10 items total across all sections)',
 				displayOptions: {
 					show: {
 						resource: ['interactive'],
@@ -430,7 +507,7 @@ export class WhatsAppPro implements INodeType {
 								name: 'title',
 								type: 'string',
 								default: '',
-								description: 'Section header',
+								description: 'Section header (max 24 characters)',
 							},
 							{
 								displayName: 'Items',
@@ -451,6 +528,7 @@ export class WhatsAppPro implements INodeType {
 												name: 'id',
 												type: 'string',
 												default: '',
+												description: 'Unique item identifier (max 200 characters)',
 											},
 											{
 												displayName: 'Title',
@@ -475,7 +553,7 @@ export class WhatsAppPro implements INodeType {
 				],
 			},
 
-			// ============ CTA BUTTON FIELDS ============
+			// ==================== CTA BUTTON FIELDS ====================
 			{
 				displayName: 'CTA Type',
 				name: 'ctaType',
@@ -543,7 +621,7 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ TEMPLATE FIELDS ============
+			// ==================== TEMPLATE FIELDS ====================
 			{
 				displayName: 'Template Name',
 				name: 'templateName',
@@ -613,7 +691,7 @@ export class WhatsAppPro implements INodeType {
 				],
 			},
 
-			// ============ LOCATION FIELDS ============
+			// ==================== LOCATION FIELDS ====================
 			{
 				displayName: 'Latitude',
 				name: 'latitude',
@@ -669,7 +747,7 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ MEDIA FIELDS ============
+			// ==================== MEDIA FIELDS ====================
 			{
 				displayName: 'Media Source',
 				name: 'mediaSource',
@@ -746,7 +824,7 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ REACTION FIELDS ============
+			// ==================== REACTION FIELDS ====================
 			{
 				displayName: 'Message ID',
 				name: 'messageId',
@@ -776,7 +854,7 @@ export class WhatsAppPro implements INodeType {
 				},
 			},
 
-			// ============ CATALOG FIELDS ============
+			// ==================== CATALOG FIELDS ====================
 			{
 				displayName: 'Catalog ID',
 				name: 'catalogId',
@@ -802,6 +880,32 @@ export class WhatsAppPro implements INodeType {
 					show: {
 						resource: ['catalog'],
 						operation: ['sendProduct'],
+					},
+				},
+			},
+			{
+				displayName: 'Body Text',
+				name: 'catalogBodyText',
+				type: 'string',
+				default: '',
+				description: 'Optional body text for product message',
+				displayOptions: {
+					show: {
+						resource: ['catalog'],
+						operation: ['sendProduct', 'sendProductList'],
+					},
+				},
+			},
+			{
+				displayName: 'Header Text',
+				name: 'catalogHeaderText',
+				type: 'string',
+				default: '',
+				description: 'Header text for product list',
+				displayOptions: {
+					show: {
+						resource: ['catalog'],
+						operation: ['sendProductList'],
 					},
 				},
 			},
@@ -871,7 +975,7 @@ export class WhatsAppPro implements INodeType {
 					body.to = to;
 				}
 
-				// ============ MESSAGE RESOURCE ============
+				// ==================== MESSAGE RESOURCE ====================
 				if (resource === 'message') {
 					if (operation === 'sendText') {
 						const message = this.getNodeParameter('message', i) as string;
@@ -881,7 +985,8 @@ export class WhatsAppPro implements INodeType {
 							preview_url: previewUrl,
 							body: message,
 						};
-					} else if (operation === 'sendLocation') {
+					} 
+					else if (operation === 'sendLocation') {
 						const latitude = this.getNodeParameter('latitude', i) as number;
 						const longitude = this.getNodeParameter('longitude', i) as number;
 						const name = this.getNodeParameter('locationName', i) as string;
@@ -893,7 +998,41 @@ export class WhatsAppPro implements INodeType {
 							name,
 							address,
 						};
-					} else if (operation === 'react') {
+					} 
+					else if (operation === 'sendContact') {
+						const firstName = this.getNodeParameter('contactFirstName', i) as string;
+						const lastName = this.getNodeParameter('contactLastName', i, '') as string;
+						const phone = this.getNodeParameter('contactPhone', i) as string;
+						const email = this.getNodeParameter('contactEmail', i, '') as string;
+						const org = this.getNodeParameter('contactOrg', i, '') as string;
+
+						const contact: any = {
+							name: {
+								formatted_name: lastName ? `${firstName} ${lastName}` : firstName,
+								first_name: firstName,
+							},
+							phones: [
+								{
+									phone: phone,
+									type: 'CELL',
+								},
+							],
+						};
+
+						if (lastName) {
+							contact.name.last_name = lastName;
+						}
+						if (email) {
+							contact.emails = [{ email, type: 'WORK' }];
+						}
+						if (org) {
+							contact.org = { company: org };
+						}
+
+						body.type = 'contacts';
+						body.contacts = [contact];
+					}
+					else if (operation === 'react') {
 						const messageId = this.getNodeParameter('messageId', i) as string;
 						const emoji = this.getNodeParameter('emoji', i) as string;
 						body.type = 'reaction';
@@ -904,7 +1043,7 @@ export class WhatsAppPro implements INodeType {
 					}
 				}
 
-				// ============ INTERACTIVE RESOURCE ============
+				// ==================== INTERACTIVE RESOURCE ====================
 				else if (resource === 'interactive') {
 					body.type = 'interactive';
 					
@@ -914,6 +1053,14 @@ export class WhatsAppPro implements INodeType {
 
 					if (operation === 'sendButtons') {
 						const buttonsData = this.getNodeParameter('buttons.buttonValues', i, []) as any[];
+						
+						// Validate buttons inline
+						if (buttonsData.length === 0) {
+							throw new NodeOperationError(this.getNode(), 'At least one button is required', { itemIndex: i });
+						}
+						if (buttonsData.length > 3) {
+							throw new NodeOperationError(this.getNode(), 'Maximum 3 buttons allowed per message', { itemIndex: i });
+						}
 						
 						body.interactive = {
 							type: 'button',
@@ -930,18 +1077,26 @@ export class WhatsAppPro implements INodeType {
 						};
 
 						if (headerText) {
-							body.interactive.header = { type: 'text', text: headerText };
+							body.interactive.header = { type: 'text', text: headerText.substring(0, 60) };
 						}
 						if (footerText) {
-							body.interactive.footer = { text: footerText };
+							body.interactive.footer = { text: footerText.substring(0, 60) };
 						}
 					} 
 					else if (operation === 'sendList') {
 						const buttonText = this.getNodeParameter('buttonText', i) as string;
 						const sectionsData = this.getNodeParameter('sections.sectionValues', i, []) as any[];
 
+						// Validate sections inline
+						if (sectionsData.length === 0) {
+							throw new NodeOperationError(this.getNode(), 'At least one section is required', { itemIndex: i });
+						}
+						if (sectionsData.length > 10) {
+							throw new NodeOperationError(this.getNode(), 'Maximum 10 sections allowed', { itemIndex: i });
+						}
+
 						const sections = sectionsData.map((section: any) => ({
-							title: section.title,
+							title: section.title?.substring(0, 24) || '',
 							rows: (section.items?.itemValues || []).map((item: any) => ({
 								id: item.id,
 								title: item.title.substring(0, 24),
@@ -959,10 +1114,10 @@ export class WhatsAppPro implements INodeType {
 						};
 
 						if (headerText) {
-							body.interactive.header = { type: 'text', text: headerText };
+							body.interactive.header = { type: 'text', text: headerText.substring(0, 60) };
 						}
 						if (footerText) {
-							body.interactive.footer = { text: footerText };
+							body.interactive.footer = { text: footerText.substring(0, 60) };
 						}
 					}
 					else if (operation === 'sendCta') {
@@ -1001,7 +1156,7 @@ export class WhatsAppPro implements INodeType {
 					}
 				}
 
-				// ============ TEMPLATE RESOURCE ============
+				// ==================== TEMPLATE RESOURCE ====================
 				else if (resource === 'template') {
 					if (operation === 'sendTemplate') {
 						const templateName = this.getNodeParameter('templateName', i) as string;
@@ -1092,7 +1247,7 @@ export class WhatsAppPro implements INodeType {
 					}
 				}
 
-				// ============ MEDIA RESOURCE ============
+				// ==================== MEDIA RESOURCE ====================
 				else if (resource === 'media') {
 					const mediaSource = this.getNodeParameter('mediaSource', i) as string;
 					const caption = this.getNodeParameter('caption', i, '') as string;
@@ -1127,12 +1282,12 @@ export class WhatsAppPro implements INodeType {
 					}
 				}
 
-				// ============ CATALOG RESOURCE ============
+				// ==================== CATALOG RESOURCE ====================
 				else if (resource === 'catalog') {
 					if (operation === 'sendProduct') {
 						const catalogId = this.getNodeParameter('catalogId', i) as string;
 						const productRetailerId = this.getNodeParameter('productRetailerId', i) as string;
-						const bodyText = this.getNodeParameter('bodyText', i, '') as string;
+						const bodyText = this.getNodeParameter('catalogBodyText', i, '') as string;
 
 						body.type = 'interactive';
 						body.interactive = {
@@ -1146,8 +1301,8 @@ export class WhatsAppPro implements INodeType {
 					}
 					else if (operation === 'sendProductList') {
 						const catalogId = this.getNodeParameter('catalogId', i) as string;
-						const bodyText = this.getNodeParameter('bodyText', i) as string;
-						const headerText = this.getNodeParameter('headerText', i, '') as string;
+						const bodyText = this.getNodeParameter('catalogBodyText', i) as string;
+						const headerText = this.getNodeParameter('catalogHeaderText', i, '') as string;
 						const sectionsData = this.getNodeParameter('productSections.sectionValues', i, []) as any[];
 
 						const sections = sectionsData.map((section: any) => ({
@@ -1185,18 +1340,32 @@ export class WhatsAppPro implements INodeType {
 				}
 
 				// Execute the API request
-				const response = await this.helpers.httpRequestWithAuthentication.call(
-					this,
-					'whatsAppProApi',
-					{
-						method,
-						url: `${baseUrl}${endpoint}`,
-						body,
-						json: true,
-					},
-				);
-
-				returnData.push({ json: response });
+				try {
+					const response = await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'whatsAppProApi',
+						{
+							method,
+							url: `${baseUrl}${endpoint}`,
+							body,
+							json: true,
+						},
+					);
+					returnData.push({ json: response });
+				} catch (error: any) {
+					// Handle WhatsApp API errors
+					const errorData = error.response?.data?.error;
+					if (errorData) {
+						const errorMessage = errorData.message || 'Unknown WhatsApp API error';
+						const errorCode = errorData.code || 'UNKNOWN';
+						throw new NodeOperationError(
+							this.getNode(),
+							`WhatsApp API Error [${errorCode}]: ${errorMessage}`,
+							{ itemIndex: i }
+						);
+					}
+					throw error;
+				}
 
 			} catch (error: any) {
 				if (this.continueOnFail()) {

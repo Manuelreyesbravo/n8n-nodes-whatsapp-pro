@@ -49,12 +49,12 @@ npm install n8n-nodes-whatsapp-pro
 ### Message
 - **Send Text** - Send text messages with URL preview option
 - **Send Location** - Send location with coordinates
-- **Send Contact** - Send contact cards
+- **Send Contact** - Send contact cards with name, phone, email, and organization
 - **React** - React to messages with emoji
 
 ### Interactive
 - **Send Buttons** - Quick reply buttons (up to 3)
-- **Send List** - List message with sections (up to 10 items)
+- **Send List** - List message with sections (up to 10 items total)
 - **Send CTA Button** - Call-to-action (URL or Phone call)
 - **Request Location** - Ask user for their location
 
@@ -75,6 +75,20 @@ npm install n8n-nodes-whatsapp-pro
 - **Send Product** - Single product message
 - **Send Product List** - Multi-product message (up to 30)
 - **Get Catalog** - Get catalog information
+
+## WhatsApp API Limits
+
+| Element | Limit |
+|---------|-------|
+| Buttons per message | 3 |
+| Button title | 20 characters |
+| List sections | 10 |
+| List items (total) | 10 |
+| List item title | 24 characters |
+| List item description | 72 characters |
+| Header text | 60 characters |
+| Footer text | 60 characters |
+| Body text | 1024 characters |
 
 ## Examples
 
@@ -111,6 +125,37 @@ npm install n8n-nodes-whatsapp-pro
 }
 ```
 
+### Send Contact Card
+
+```json
+{
+  "to": "56912345678",
+  "contactFirstName": "John",
+  "contactLastName": "Doe",
+  "contactPhone": "+1234567890",
+  "contactEmail": "john@example.com",
+  "contactOrg": "Acme Inc"
+}
+```
+
+## Validation & Error Handling
+
+The node includes built-in validation for:
+- Maximum button count (3)
+- Maximum sections (10)
+- Maximum total list items (10)
+- Character limits for all text fields
+- Required field validation
+- WhatsApp API error code handling
+
+## Testing
+
+```bash
+npm test           # Run all tests
+npm run test:watch # Watch mode
+npm run test:coverage # With coverage report
+```
+
 ## Roadmap
 
 - [ ] WhatsApp Flows
@@ -118,6 +163,18 @@ npm install n8n-nodes-whatsapp-pro
 - [ ] Authentication OTP Templates
 - [ ] Coupon Templates
 - [ ] Read Receipts Webhook
+
+## Changelog
+
+### v2.1.0
+- Added Send Contact operation with full contact card support
+- Added comprehensive validation for all WhatsApp API limits
+- Added detailed error messages for WhatsApp API errors
+- Added Jest test suite with 50+ tests
+- Improved documentation with API limits table
+
+### v2.0.0
+- Initial release with interactive messages support
 
 ## License
 
